@@ -6,19 +6,15 @@
 # @Python3.6
 import threading
 
-from order_consume import start_order_consume
-from overtime_consume import start_overtime_consume
-from paid_consume import start_paid_consume
+from .order_consume import start_order_consume
+from .overtime_consume import start_overtime_consume
+from .paid_consume import start_paid_consume
 
 
 def start_consume(goods_id):
-    t1 = threading.Thread(target=start_order_consume, args=(goods_id,))
-    t2 = threading.Thread(target=start_overtime_consume)
-    t3 = threading.Thread(target=start_paid_consume, args=(goods_id,))
+    t1 = threading.Thread(target=start_order_consume, args=(goods_id,), daemon=True)
+    t2 = threading.Thread(target=start_overtime_consume, daemon=True)
+    t3 = threading.Thread(target=start_paid_consume, args=(goods_id,), daemon=True)
     t1.start()
     t2.start()
     t3.start()
-
-
-if __name__ == "__main__":
-    pass

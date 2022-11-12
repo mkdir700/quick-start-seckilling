@@ -12,28 +12,32 @@ import pika
 import pymysql
 import redis
 from dbutils.pooled_db import PooledDB
-from settings import *
+
+import settings
 
 # 从redis连接池中获取连接对象
 redis_pool = redis.ConnectionPool(
-    host=REDIS_HOST, port=REDIS_PORT, password=REDIS_PASSWORD, max_connections=512
+    host=settings.REDIS_HOST,
+    port=settings.REDIS_PORT,
+    password=settings.REDIS_PASSWORD,
+    max_connections=512,
 )
 redis_conn = redis.Redis(connection_pool=redis_pool)
 
 
 # 创建rabbitmq连接
-rabbitmq_conn = pika.BlockingConnection(pika.ConnectionParameters(host=RABBITMQ_HOST))
+rabbitmq_conn = pika.BlockingConnection(pika.ConnectionParameters(host=settings.RABBITMQ_HOST))
 
 # 从mysql连接池中获取连接对象
 mysql_pool = PooledDB(
     pymysql,
     50,
-    host=MYSQL_HOST,
-    port=MYSQL_PORT,
-    user=MYSQL_USER,
-    passwd=MYSQL_PASSWORD,
-    db=MYSQL_DB,
-    charset=MYSQL_CHARSET,
+    host=settings.MYSQL_HOST,
+    port=settings.MYSQL_PORT,
+    user=settings.MYSQL_USER,
+    passwd=settings.MYSQL_PASSWORD,
+    db=settings.MYSQL_DB,
+    charset=settings.MYSQL_CHARSET,
 )
 
 """

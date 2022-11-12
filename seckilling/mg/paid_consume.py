@@ -14,7 +14,7 @@
 """
 import pika
 from settings import RABBITMQ_HOST
-from utils import update_storage
+from .utils import update_storage
 
 
 def start_paid_consume(goods_id):

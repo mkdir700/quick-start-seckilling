@@ -32,5 +32,3 @@ channel.queue_bind(
 
 channel.basic_consume(on_message_callback=insert_order, queue=queue, auto_ack=False)
 channel.start_consuming()
-
-print(1111111111111111)

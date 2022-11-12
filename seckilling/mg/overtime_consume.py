@@ -14,7 +14,7 @@
 
 import pika
 from settings import RABBITMQ_HOST
-from utils import overtime_order
+from .utils import overtime_order
 
 
 def start_overtime_consume():

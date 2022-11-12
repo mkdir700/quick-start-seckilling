@@ -14,7 +14,7 @@ import time
 
 import pika
 from settings import RABBITMQ_HOST
-from utils import insert_order
+from .utils import insert_order
 
 
 def start_order_consume(goods_id):
@@ -35,8 +35,6 @@ def start_order_consume(goods_id):
     )
 
     channel.basic_consume(on_message_callback=insert_order, queue=queue, auto_ack=False)
-
-    print(1111111111111111)
 
     channel.start_consuming()
 
