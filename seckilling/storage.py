@@ -98,7 +98,7 @@ def storage_update_storage(order_info):
     # order_id = order_msg.get("order_id")
     goods_id = order_info.get("goods_id")
 
-    sql = "UPDATE storage SET quantity=quantity-1 where id=%s"
+    sql = "UPDATE storage SET quantity=quantity-1 where goods_id=%s"
     param = goods_id
     try:
         cur.execute(sql, param)
