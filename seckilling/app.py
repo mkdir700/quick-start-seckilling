@@ -23,24 +23,27 @@ def hello_world():
 # 抢购接口
 @app.route("/purchase")
 def purchase():
-    # user_id, goods_id
-    user_id = request.args.get("user_id")
-    goods_id = request.args.get("goods_id")
-
     """
-        0. 由于省略了用户相关业务，所以直接传值代表用户id，仅做测试。
+    0. 由于省略了用户相关业务，所以直接传值代表用户id，仅做测试。
 
-        流程：
-        1. redis计数器判断
-            - 计数器设置为库存数量
-            - 当超过计数器时，直接返回失败。
-        2. 通过计数器的订单获得一个唯一标识
-            - 将用户-标识 写入redis
-            - 写入订单队列 + 超时队列
+    流程：
+    1. redis计数器判断
+        - 计数器设置为库存数量
+        - 当超过计数器时，直接返回失败。
+    2. 通过计数器的订单获得一个唯一标识
+        - 将用户-标识 写入redis
+        - 写入订单队列 + 超时队列
 
     :return: 返回状态 + 标识
     """
+    user_id = request.args.get("user_id")
+    goods_id = request.args.get("goods_id")
+
     res = {"status": False, "msg": ""}
+
+    if user_id is None or goods_id is None:
+        res["msg"] = "参数错误"
+        return jsonify(res), 400
 
     flag = plus_counter(goods_id)
     # 成功申请
