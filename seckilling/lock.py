@@ -7,9 +7,10 @@
 """
     分布式锁
 """
+import math
 import time
 import uuid
-import math
+
 import redis
 
 
@@ -17,7 +18,7 @@ import redis
 def acquire_lock_with_timeout(conn, lockname, acquire_timeout=2, lock_timeout=1):
     # 128位随机标识符
     identifier = str(uuid.uuid4())
-    lockname = 'lock:' + lockname
+    lockname = "lock:" + lockname
     lock_timeout = int(math.ceil(lock_timeout))  # 确保传给exprie是整数
 
     end = time.time() + acquire_timeout
@@ -35,13 +36,13 @@ def acquire_lock_with_timeout(conn, lockname, acquire_timeout=2, lock_timeout=1)
 # 释放锁
 def release_lock(conn, lockname, identifier):
     pipe = conn.pipeline(True)
-    lockname = 'lock:' + lockname
+    lockname = "lock:" + lockname
 
     while True:
         try:
             pipe.watch(lockname)
             # 判断标志是否相同
-            if str(pipe.get(lockname), encoding='utf-8') == identifier:
+            if str(pipe.get(lockname), encoding="utf-8") == identifier:
                 pipe.multi()
                 pipe.delete(lockname)
                 pipe.execute()

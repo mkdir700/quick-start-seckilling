@@ -4,10 +4,12 @@
 # @File    : __init__.py
 # @Software: PyCharm
 # @Python3.6
+import threading
+
 from order_consume import start_order_consume
 from overtime_consume import start_overtime_consume
 from paid_consume import start_paid_consume
-import threading
+
 
 def start_consume(goods_id):
     t1 = threading.Thread(target=start_order_consume, args=(goods_id,))
@@ -18,6 +20,5 @@ def start_consume(goods_id):
     t3.start()
 
 
-
-if __name__ == '__main__':
+if __name__ == "__main__":
     pass

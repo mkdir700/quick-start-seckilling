@@ -19,8 +19,8 @@
             - goods_id
             - 库存数量
 """
-from conn import mysql_pool
 import pymysql
+from conn import mysql_pool
 
 
 def storage_insert_order(order_info):
@@ -31,7 +31,9 @@ def storage_insert_order(order_info):
     :return:
     """
     # mysql_conn = mysql_pool.connection()
-    mysql_conn = pymysql.connect(host='localhost', user='root', passwd='root', db='seckilling', port=3306)
+    mysql_conn = pymysql.connect(
+        host="localhost", user="root", passwd="root", db="seckilling", port=3306
+    )
     cur = mysql_conn.cursor()
 
     user_id = order_info.get("user_id")
@@ -51,7 +53,6 @@ def storage_insert_order(order_info):
     finally:
         cur.close()
         mysql_conn.close()
-
 
 
 def storage_update_order(order_info, flag=0):
@@ -83,7 +84,6 @@ def storage_update_order(order_info, flag=0):
         mysql_conn.close()
 
 
-
 def storage_update_storage(order_info):
     """
         支付队列的消费者 用来减库存
@@ -99,7 +99,7 @@ def storage_update_storage(order_info):
     goods_id = order_info.get("goods_id")
 
     sql = "UPDATE storage SET quantity=quantity-1 where id=%s"
-    param = (goods_id)
+    param = goods_id
     try:
         cur.execute(sql, param)
         mysql_conn.commit()
@@ -113,9 +113,5 @@ def storage_update_storage(order_info):
         mysql_conn.close()
 
 
-if __name__ == '__main__':
-    storage_insert_order(order_info = {
-            "goods_id": 1,
-            "user_id": 2,
-            "order_id": "asd"
-        })
+if __name__ == "__main__":
+    storage_insert_order(order_info={"goods_id": 1, "user_id": 2, "order_id": "asd"})

@@ -4,10 +4,12 @@
 # @File    : utils.py
 # @Software: PyCharm
 # @Python3.6
-from status import enter_overtime, paid_order
-from storage import storage_update_order, storage_insert_order, storage_update_storage
 import json
 import time
+
+from status import enter_overtime, paid_order
+from storage import (storage_insert_order, storage_update_order,
+                     storage_update_storage)
 
 
 def overtime_order(ch, method, properties, body):
@@ -36,8 +38,11 @@ def insert_order(ch, method, properties, body):
 
 def update_storage(ch, method, properties, body):
     body = json.loads(body)
-    if storage_update_storage(body) and storage_update_order(body, 1) and paid_order(body):
+    if (
+        storage_update_storage(body)
+        and storage_update_order(body, 1)
+        and paid_order(body)
+    ):
         ch.basic_ack(delivery_tag=method.delivery_tag)
     else:
         ch.basic_nack(delivery_tag=method.delivery_tag)
-

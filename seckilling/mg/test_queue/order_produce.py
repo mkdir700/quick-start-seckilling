@@ -8,8 +8,10 @@
     订单生产者 （订单队列）
 
 """
-from conn import rabbitmq_conn
 import json
+
+from conn import rabbitmq_conn
+
 
 def enter_order_queue(order_info):
     """
@@ -28,31 +30,22 @@ def enter_order_queue(order_info):
 
     channel = rabbitmq_conn.channel()
 
-    exchange = 'order.exchange'
-    queue = 'order.queue'
-    routing_key = 'order.' + str(goods_id) + '.' + str(user_id)
+    exchange = "order.exchange"
+    queue = "order.queue"
+    routing_key = "order." + str(goods_id) + "." + str(user_id)
 
-    channel.exchange_declare(exchange=exchange,
-                             exchange_type='topic',
-                             durable=True)
+    channel.exchange_declare(exchange=exchange, exchange_type="topic", durable=True)
 
-    channel.queue_declare(queue=queue,
-                          durable=True)
+    channel.queue_declare(queue=queue, durable=True)
 
-    channel.queue_bind(exchange=exchange,
-                       queue=queue)
+    channel.queue_bind(exchange=exchange, queue=queue)
 
     # message = str(goods_id) + ',' + str(user_id) + ',' + str(order_id)
     message = json.dumps(order_info)
 
-    channel.basic_publish(exchange=exchange,
-                          routing_key=routing_key,
-                          body=message)
+    channel.basic_publish(exchange=exchange, routing_key=routing_key, body=message)
     print(333333333333333333)
     return True
 
-enter_order_queue(order_info = {
-            "goods_id": 1,
-            "user_id": 2,
-            "order_id": "asd"
-        })
+
+enter_order_queue(order_info={"goods_id": 1, "user_id": 2, "order_id": "asd"})

@@ -2,26 +2,26 @@
     请求相关接口
 
 """
+import uuid
 
 from flask import Flask, jsonify, request
-from paid_produce import enter_paid_queue
-from status import *
+from mg import start_consume
 from mg.order_produce import enter_order_queue
 from mg.overtime_produce import enter_overtime_queue
-import uuid
-from mg import start_consume
-
+from mg.paid_produce import enter_paid_queue
+from status import *
 
 app = Flask(__name__)
 start_consume(1)
 
-@app.route('/')
+
+@app.route("/")
 def hello_world():
-    return 'Hello World!'
+    return "Hello World!"
 
 
 # 抢购接口
-@app.route('/purchase')
+@app.route("/purchase")
 def purchase():
     # user_id, goods_id
     user_id = request.args.get("user_id")
@@ -40,10 +40,7 @@ def purchase():
 
     :return: 返回状态 + 标识
     """
-    res = {
-        "status": False,
-        "msg": ""
-    }
+    res = {"status": False, "msg": ""}
 
     flag = plus_counter(goods_id)
     # 成功申请
@@ -54,7 +51,7 @@ def purchase():
         order_info = {
             "goods_id": goods_id,
             "user_id": user_id,
-            "order_id": str(order_id)
+            "order_id": str(order_id),
         }
         # order_info = str(goods_id) + ',' + str(user_id) + ',' + str(order_id)
         try:
@@ -81,7 +78,7 @@ def purchase():
         return jsonify(res), 200
 
 
-@app.route('/pay')
+@app.route("/pay")
 def pay():
     """
         1. 检查
@@ -95,10 +92,7 @@ def pay():
     :param order_id:
     :return:
     """
-    res = {
-        "status": False,
-        "msg": ""
-    }
+    res = {"status": False, "msg": ""}
 
     user_id = request.args.get("user_id")
     goods_id = request.args.get("goods_id")
@@ -108,11 +102,7 @@ def pay():
         res["msg"] = "参数错误"
         return jsonify(res), 202
 
-    order_info = {
-        "goods_id": goods_id,
-        "user_id": user_id,
-        "order_id": str(order_id)
-    }
+    order_info = {"goods_id": goods_id, "user_id": user_id, "order_id": str(order_id)}
     order_staus = check_order(order_info)
     if order_staus:
         if order_staus == -1:
@@ -131,6 +121,5 @@ def pay():
         return jsonify(res), 202
 
 
-
-if __name__ == '__main__':
+if __name__ == "__main__":
     app.run()

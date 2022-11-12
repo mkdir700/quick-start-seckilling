@@ -22,7 +22,7 @@
 
 """
 from conn import redis_conn
-from lock import release_lock,acquire_lock_with_timeout
+from lock import acquire_lock_with_timeout, release_lock
 
 
 def plus_counter(goods_id, storage=1000):
@@ -35,7 +35,7 @@ def plus_counter(goods_id, storage=1000):
     """
     # lock = acquire_lock_with_timeout(redis_conn, goods_id)
     # if lock:
-    count = redis_conn.incr("counter:"+str(goods_id))
+    count = redis_conn.incr("counter:" + str(goods_id))
     # release_lock(redis_conn, goods_id, lock)
     if count > storage:
         return False
@@ -57,7 +57,7 @@ def create_order(order_info):
     order_id = order_info.get("order_id")
     goods_id = order_info.get("goods_id")
 
-    redis_conn.hset("order:"+str(goods_id), str(order_id), str(user_id))
+    redis_conn.hset("order:" + str(goods_id), str(order_id), str(user_id))
     return True
     # else:
     #     return False
@@ -83,10 +83,12 @@ def check_order(order_info):
     goods_id = order_info.get("goods_id")
 
     # 如果已存在超时队列
-    if redis_conn.sismember("order:"+str(goods_id)+":"+"overtime", order_id):
+    if redis_conn.sismember("order:" + str(goods_id) + ":" + "overtime", order_id):
         return -1
     else:
-        return user_id == str(redis_conn.hget("order:" + str(goods_id), order_id), encoding="utf-8")
+        return user_id == str(
+            redis_conn.hget("order:" + str(goods_id), order_id), encoding="utf-8"
+        )
 
 
 def enter_overtime(order_info):
@@ -105,7 +107,7 @@ def enter_overtime(order_info):
     if _is_deal(order_info):
         return False
     else:
-        redis_conn.sadd("order:"+str(goods_id)+":"+"overtime", order_id)
+        redis_conn.sadd("order:" + str(goods_id) + ":" + "overtime", order_id)
         return True
 
 
@@ -120,10 +122,9 @@ def _is_deal(order_info):
     user_id = order_info.get("user_id")
     order_id = order_info.get("order_id")
     goods_id = order_info.get("goods_id")
-    if redis_conn.sismember("order:"+str(goods_id)+":"+"deal", order_id):
+    if redis_conn.sismember("order:" + str(goods_id) + ":" + "deal", order_id):
         return True
     return False
-
 
 
 def _is_overtime(order_info):
@@ -138,7 +139,7 @@ def _is_overtime(order_info):
     order_id = order_info.get("order_id")
     goods_id = order_info.get("goods_id")
 
-    if redis_conn.sismember("order:"+str(goods_id)+":"+"overtime", order_id):
+    if redis_conn.sismember("order:" + str(goods_id) + ":" + "overtime", order_id):
         return True
     return False
 
@@ -162,9 +163,5 @@ def paid_order(order_info):
         return True
 
 
-if __name__ == '__main__':
-    create_order(order_info = {
-            "goods_id": 1,
-            "user_id": 1,
-            "order_id": "asd"
-        })
+if __name__ == "__main__":
+    create_order(order_info={"goods_id": 1, "user_id": 1, "order_id": "asd"})

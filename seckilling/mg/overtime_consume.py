@@ -12,33 +12,31 @@
         2. 加入redis相关超时键
 """
 
-from utils import overtime_order
 import pika
 from settings import RABBITMQ_HOST
+from utils import overtime_order
 
 
 def start_overtime_consume():
-    rabbitmq_conn = pika.BlockingConnection(pika.ConnectionParameters(host=RABBITMQ_HOST))
+    rabbitmq_conn = pika.BlockingConnection(
+        pika.ConnectionParameters(host=RABBITMQ_HOST)
+    )
     channel = rabbitmq_conn.channel()
 
     # 延迟交换机死信收容交换机
-    exchange = 'overtime.exchange'
+    exchange = "overtime.exchange"
     # 延迟队列死信收容队列
-    queue = 'overtime.queue'
+    queue = "overtime.queue"
 
-    channel.exchange_declare(exchange=exchange,
-                             exchange_type='fanout',
-                             durable=True
-                             )
+    channel.exchange_declare(exchange=exchange, exchange_type="fanout", durable=True)
 
     channel.queue_declare(queue=queue, durable=True)
 
-    channel.basic_consume(on_message_callback=overtime_order,
-                          queue=queue,
-                          auto_ack=False)
+    channel.basic_consume(
+        on_message_callback=overtime_order, queue=queue, auto_ack=False
+    )
     channel.start_consuming()
 
 
-
-if __name__ == '__main__':
+if __name__ == "__main__":
     pass
