@@ -8,6 +8,7 @@ import sqlalchemy as sa
 
 
 class OrderHistory(sm.SQLModel, table=True):
+    """历史订单表"""
     __tablename__ = "order_history"
     id: Optional[int] = sm.Field(
         default=None,
@@ -25,3 +26,17 @@ class OrderHistory(sm.SQLModel, table=True):
         description="订单状态, -1: 超时, 0: 未支付, 1: 已支付",
         sa_column=sa.Column(sa.String(1), default="0"),
     )
+
+
+class Storage(sm.SQLModel, table=True):
+    """库存表"""
+    __tablename__ = "storage"
+    id: Optional[int] = sm.Field(
+        default=None,
+        primary_key=True,
+        sa_column=sa.Column(
+            sa.Integer, autoincrement=True, primary_key=True, comment="id"
+        ),
+    )
+    goods_id: str = sm.Field(nullable=False, description="商品id")
+    quantity: int = sm.Field(nullable=False, description="库存数量")
